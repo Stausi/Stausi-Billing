@@ -3,7 +3,7 @@ games { 'gta5' }
 
 author 'Stausi'
 description 'Stausi Billing'
-version '1.0.0'
+version '1.0.1'
 lua54 'yes'
 
 server_scripts {
