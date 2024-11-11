@@ -69,7 +69,7 @@ jobs:
           mkdir -p ./temp/st_billing
           # Copy the necessary files while preserving directory structure
           cp --parents client/main.lua server/main.lua ./temp/st_billing/
-          cp config.lua ./temp/st_billing/
+          cp config.lua fxmanifest.lua ./temp/st_billing/
 
           # Copy README if it exists (case-insensitive)
           if [ -f "./README.md" ]; then
