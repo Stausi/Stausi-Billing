@@ -4,8 +4,9 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - '**/*.md'
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -38,6 +39,15 @@ jobs:
           mv web/build ./release/build
           # Include the source code in release
           cp -r web ./release/source_code
+          # Create a zip file of the release assets
+          cd release
+          zip -r release_assets.zip ./*
+
+      - name: Upload Release Assets
+        uses: actions/upload-artifact@v3
+        with:
+          name: release_assets
+          path: release/release_assets.zip
 
       - name: Create Release
         uses: ncipollo/release-action@v1
@@ -48,6 +58,4 @@ jobs:
             Automatically generated release for commit with "bump" in the message.
           draft: false
           prerelease: false
-          files: |
-            release/build/**/*
-            release/source_code/**/*
+          artifacts: release_assets
