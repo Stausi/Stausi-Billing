@@ -34,3 +34,7 @@ files {
 }
 
 ui_page 'web/build/index.html'
+
+shared_script {
+    '@es_extended/imports.lua'
+}

@@ -1,5 +1,3 @@
-ESX = exports["es_extended"]:getSharedObject()
-
 local cached_players = {}
 
 RegisterServerEvent('esx_billing:sendBill')
