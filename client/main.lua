@@ -1,5 +1,3 @@
-ESX = nil
-
 local appInfo = {
     identifier = "billing_app",
     name = "Faktura",
@@ -7,11 +5,6 @@ local appInfo = {
 }
 
 Citizen.CreateThread(function()
-	while ESX == nil do
-		TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
-		Citizen.Wait(0)
-	end
-
 	while GetResourceState("lb-phone") ~= "started" do
         Wait(500)
     end
