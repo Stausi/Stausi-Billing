@@ -3,10 +3,10 @@ name: Build and Release React App
 on:
   push:
     branches:
-      - main
+      - main  # Adjust this to the branch you want to monitor
 
 permissions:
-  contents: write
+  contents: write  # Allow GITHUB_TOKEN to create a release
 
 jobs:
   build:
@@ -14,24 +14,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      # Step 2: Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '18'  # Set to the Node.js version required by your project
 
+      # Step 3: Install dependencies
       - name: Install Dependencies
         run: |
           cd web
           npm install
 
+      # Step 4: Build the React app
       - name: Build React App
         run: |
           cd web
           npm run build
 
+      # Step 5: Package built assets and source code
       - name: Create release assets
         run: |
           mkdir release
@@ -43,17 +48,26 @@ jobs:
           cd release
           zip -r release_assets.zip ./*
 
+      # Step 6: Extract Version from fxmanifest.lua
+      - name: Extract Version
+        id: extract_version
+        run: |
+          version=$(grep -oP "version\s+'\K[0-9]+\.[0-9]+\.[0-9]+" fxmanifest.lua)
+          echo "version=$version" >> $GITHUB_ENV
+
+      # Step 7: Upload Release Assets
       - name: Upload Release Assets
         uses: actions/upload-artifact@v3
         with:
           name: release_assets
           path: release/release_assets.zip
 
+      # Step 8: Create GitHub Release
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
           tag: bump-${{ github.run_id }}
-          name: Automated Release ${{ github.run_id }}
+          name: Release v${{ env.version }}
           body: |
             Automatically generated release for commit with "bump" in the message.
           draft: false
