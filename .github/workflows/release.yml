@@ -42,16 +42,10 @@ jobs:
         env:
           CI: false
 
-      - name: Extract Version
-        id: extract_version
-        run: |
-          version=$(grep -oP "version\s+'\K[0-9]+\.[0-9]+\.[0-9]+" fxmanifest.lua)
-          echo "RELEASE_VERSION=$version" >> $GITHUB_ENV
-
       - name: Bump Manifest Version
         run: node .github/actions/bump-manifest-version.js
         env:
-          TGT_RELEASE_VERSION: v${{ env.RELEASE_VERSION }}
+          TGT_RELEASE_VERSION: v${{ github.ref_name }}
 
       - name: Push Manifest Change
         uses: EndBug/add-and-commit@v8
