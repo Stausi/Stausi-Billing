@@ -7,14 +7,14 @@ on:
 
 jobs:
   create-release:
-    name: Build and Create Tagged release
+    name: Build and Create Tagged Release
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install archive tools
+      - name: Install Archive Tools
         run: sudo apt install zip
 
-      - name: Checkout source code
+      - name: Checkout Source Code
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
@@ -25,67 +25,66 @@ jobs:
         with:
           version: 9
 
-      - name: Get variables
-        id: get_vars
-        run: |
-          echo '::set-output name=SHORT_SHA::$(git rev-parse --short HEAD)'
-          echo '::set-output name=DATE::$(date +'%D')'
-
-      - name: Setup node
+      - name: Setup Node
         uses: actions/setup-node@v2
         with:
           node-version: 18.x
           cache: "pnpm"
           cache-dependency-path: "web/pnpm-lock.yaml"
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: pnpm i --frozen-lockfile
         working-directory: web
 
-      - name: Run build
+      - name: Run Build
         run: pnpm build
         working-directory: web
         env:
           CI: false
 
-      - name: Bump manifest version
+      - name: Extract Version
+        id: extract_version
+        run: |
+          version=$(grep -oP "version\s+'\K[0-9]+\.[0-9]+\.[0-9]+" fxmanifest.lua)
+          echo "RELEASE_VERSION=$version" >> $GITHUB_ENV
+
+      - name: Bump Manifest Version
         run: node .github/actions/bump-manifest-version.js
         env:
-          TGT_RELEASE_VERSION: ${{ github.ref_name }}
+          TGT_RELEASE_VERSION: v${{ env.RELEASE_VERSION }}
 
-      - name: Push manifest change
+      - name: Push Manifest Change
         uses: EndBug/add-and-commit@v8
         with:
           add: fxmanifest.lua
           push: true
           author_name: Manifest Bumper
           author_email: 41898282+github-actions[bot]@users.noreply.github.com
-          message: "chore: bump manifest version to ${{ github.ref_name }}"
+          message: "chore: bump manifest version to v${{ env.RELEASE_VERSION }}"
 
-      - name: Update tag ref
+      - name: Update Tag Ref
         uses: EndBug/latest-tag@latest
         with:
-          tag-name: ${{ github.ref_name }}
+          tag-name: v${{ env.RELEASE_VERSION }}
 
-      - name: Bundle files
+      - name: Bundle Files
         run: |
-          mkdir -p ./temp/ox_inventory
-          mkdir -p ./temp/ox_inventory/web
-          cp ./{server.lua,README.md,LICENSE,fxmanifest.lua,client.lua,init.lua} ./temp/ox_inventory
-          cp -r ./{setup,modules,data,locales} ./temp/ox_inventory
-          cp -r ./web/build ./temp/ox_inventory/web/build
-          cp ./web/LICENSE ./temp/ox_inventory/web/build
-          cp -r ./web/images ./temp/ox_inventory/web/images
-          cd ./temp && zip -r ../ox_inventory.zip ./ox_inventory
+          mkdir -p ./temp/release_package
+          cp ./{server.lua,README.md,LICENSE,fxmanifest.lua,client.lua,init.lua} ./temp/release_package
+          cp -r ./{setup,modules,data,locales} ./temp/release_package
+          cp -r ./web/build ./temp/release_package/web/build
+          cp ./web/LICENSE ./temp/release_package/web/build
+          cp -r ./web/images ./temp/release_package/web/images
+          cd ./temp && zip -r ../release_package.zip ./release_package
 
       - name: Create Release
         uses: "marvinpinto/action-automatic-releases@v1.2.1"
         id: auto_release
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          title: "${{ env.RELEASE_VERSION }}"
+          title: "Release v${{ env.RELEASE_VERSION }}"
           prerelease: false
-          files: ox_inventory.zip
+          files: release_package.zip
 
         env:
           CI: false
