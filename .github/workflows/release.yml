@@ -71,12 +71,22 @@ jobs:
           cp ./client/main.lua ./temp/release_package/client_main.lua
           cp ./server/main.lua ./temp/release_package/server_main.lua
           cp ./config.lua ./temp/release_package/config.lua
-          cp ./readme ./temp/release_package/README.md
+
+          # Copy README if it exists (case-insensitive)
+          if [ -f "./README.md" ]; then
+            cp ./README.md ./temp/release_package/README.md
+          elif [ -f "./readme.md" ]; then
+            cp ./readme.md ./temp/release_package/README.md
+          elif [ -f "./readme" ]; then
+            cp ./readme ./temp/release_package/README.md
+          fi
+
           # If web/build exists, include it
           if [ -d "./web/build" ]; then
             mkdir -p ./temp/release_package/web
             cp -r ./web/build ./temp/release_package/web/build
           fi
+
           # Create the zip file of the release package
           cd ./temp && zip -r ../release_package.zip ./release_package
 
