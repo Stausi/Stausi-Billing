@@ -1,0 +1,53 @@
+name: Build and Release React App
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**/*.md'
+
+jobs:
+  build:
+    if: contains(github.event.head_commit.message, 'bump')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Dependencies
+        run: |
+          cd web
+          npm install
+
+      - name: Build React App
+        run: |
+          cd web
+          npm run build
+
+      - name: Create release assets
+        run: |
+          mkdir release
+          # Move the build folder to release directory
+          mv web/build ./release/build
+          # Include the source code in release
+          cp -r web ./release/source_code
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: bump-${{ github.run_id }}
+          name: Automated Release ${{ github.run_id }}
+          body: |
+            Automatically generated release for commit with "bump" in the message.
+          draft: false
+          prerelease: false
+          files: |
+            release/build/**/*
+            release/source_code/**/*
