@@ -1,7 +1,6 @@
-ESX = nil
+ESX = exports["es_extended"]:getSharedObject()
 
 local cached_players = {}
-TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 
 RegisterServerEvent('esx_billing:sendBill')
 AddEventHandler('esx_billing:sendBill', function(playerId, sharedAccountName, label, amount, note)
