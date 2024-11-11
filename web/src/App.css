@@ -1,0 +1,109 @@
+.app {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-flow: column;
+    font-family: "Roboto";
+    overflow: hidden;
+    position: relative;
+}
+
+.app h1.headline {
+    margin: 0;
+    padding: 1rem 1rem .5rem;
+    margin-top: 2rem;
+    margin-bottom: .5rem;
+    text-align: center;
+}
+
+.app .footer button:hover {
+    cursor: pointer;
+}
+
+.app.light {
+    background-color: #fefefe;
+}
+
+.app.dark {
+    background-color: #111;
+}
+
+.app.light h1.headline {
+    color: #111;
+}
+
+.app.dark h1.headline {
+    color: #fefefe;
+}
+
+.player-billings {
+    width: 100%;
+    display: flex;
+    flex-flow: column;
+    overflow: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    max-height: 50rem;
+    margin-bottom: 5rem;
+}
+
+.player-billings::-webkit-scrollbar {
+    display: none;
+}
+
+.billing-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 1.5rem 1rem;
+    border-radius: 5px;
+    padding: 0.75rem;
+    background-color: #1c1c1c;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.app.light .billing-container {
+    background-color: #fefefe;
+}
+
+.billing-container h1, .billing-container h2 {
+    margin: 0;
+}
+
+.container-header {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.container-header h1 {
+    color: #fefefe;
+    font-size: 1.2em;
+}
+
+.app.light .container-header h1 {
+    color: #111;
+}
+
+.app-content {
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.app-content.transitioning {
+    opacity: 0;
+}
+
+.dev-wrapper {
+    position: absolute;
+
+    bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    margin: auto;
+
+    width: 29rem;
+    height: 58.5rem;
+}

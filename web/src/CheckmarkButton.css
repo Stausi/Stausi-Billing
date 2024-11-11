@@ -1,0 +1,119 @@
+:root {
+    --check-size: 30px;
+    --check-border-width: 2px;
+    --checkmark-width: calc(var(--check-size) / 2);
+    --checkmark-height: calc(var(--checkmark-width) / 2);
+    --checkmark-left: calc(var(--checkmark-width) / 2);
+    --checkmark-top: 57%;
+    --checkmark-color: #19b8a2;
+}
+
+.checkmark-wrapper {
+    width: var(--check-size);
+    height: var(--check-size);
+    position: relative;
+    cursor: pointer;
+}
+
+.checkmark-wrapper::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: var(--check-border-width) solid #f8f8f8;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: block;
+    z-index: 0;
+}
+
+.app.light .checkmark-wrapper::after {
+    border: var(--check-border-width) solid #111;
+}
+
+.checkmark-wrapper::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: var(--check-border-width) solid transparent;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: block;
+    z-index: 1;
+}
+
+.checkmark {
+    height: var(--checkmark-height);
+    width: var(--checkmark-width);
+    position: absolute;
+    opacity: 1;
+    left: var(--checkmark-left);
+    top: var(--checkmark-top);
+    display: block;
+    border-left: var(--check-border-width) solid #f8f8f8;
+    border-bottom: var(--check-border-width) solid #f8f8f8;
+    transform-origin: left top;
+    transform: rotate(-45deg);
+}
+
+.app.light .checkmark {
+    border-left: var(--check-border-width) solid #111;
+    border-bottom: var(--check-border-width) solid #111;
+}
+
+.checkmark-wrapper.checkmarked::before {
+    border-left-color: var(--checkmark-color);
+    animation: circle linear forwards .75s;
+}
+
+.checkmark.animate-checkmark {
+    animation: checkmark linear both 1s;
+}
+
+@keyframes checkmark {
+    0% {
+        height: 0;
+        width: 0;
+        opacity: 0;
+        border-left: var(--check-border-width) solid var(--checkmark-color);
+        border-bottom: var(--check-border-width) solid var(--checkmark-color);
+    }
+    80% {
+        height: 0;
+        width: 0;
+        opacity: 0;
+        border-left: var(--check-border-width) solid var(--checkmark-color);
+        border-bottom: var(--check-border-width) solid var(--checkmark-color);
+    }
+    90% {
+        height: var(--checkmark-height);
+        width: 0;
+        opacity: 1;
+        border-left: var(--check-border-width) solid var(--checkmark-color);
+        border-bottom: var(--check-border-width) solid var(--checkmark-color);
+    }
+    100% {
+        height: var(--checkmark-height);
+        width: var(--checkmark-width);
+        opacity: 1;
+        border-left: var(--check-border-width) solid var(--checkmark-color);
+        border-bottom: var(--check-border-width) solid var(--checkmark-color);
+    }
+}
+
+@keyframes circle {
+    0% {
+        border-color: transparent;
+        border-left-color: var(--checkmark-color);
+    }
+    90% {
+        transform: rotate(-360deg);
+        border-color: transparent;
+        border-left-color: var(--checkmark-color);
+    }
+    100% {
+        transform: rotate(-360deg);
+        border-color: var(--checkmark-color);
+    }
+}
