@@ -66,29 +66,28 @@ jobs:
 
       - name: Bundle Files
         run: |
-          mkdir -p ./temp/release_package
-          # Copy the necessary files to the release package
-          cp ./client/main.lua ./temp/release_package/client_main.lua
-          cp ./server/main.lua ./temp/release_package/server_main.lua
-          cp ./config.lua ./temp/release_package/config.lua
+          mkdir -p ./temp/st_billing
+          # Copy the necessary files while preserving directory structure
+          cp --parents client/main.lua server/main.lua ./temp/st_billing/
+          cp config.lua ./temp/st_billing/
 
           # Copy README if it exists (case-insensitive)
           if [ -f "./README.md" ]; then
-            cp ./README.md ./temp/release_package/README.md
+            cp ./README.md ./temp/st_billing/README.md
           elif [ -f "./readme.md" ]; then
-            cp ./readme.md ./temp/release_package/README.md
+            cp ./readme.md ./temp/st_billing/README.md
           elif [ -f "./readme" ]; then
-            cp ./readme ./temp/release_package/README.md
+            cp ./readme ./temp/st_billing/README.md
           fi
 
           # If web/build exists, include it
           if [ -d "./web/build" ]; then
-            mkdir -p ./temp/release_package/web
-            cp -r ./web/build ./temp/release_package/web/build
+            mkdir -p ./temp/st_billing/web
+            cp -r ./web/build ./temp/st_billing/web/build
           fi
 
           # Create the zip file of the release package
-          cd ./temp && zip -r ../release_package.zip ./release_package
+          cd ./temp && zip -r ../st_billing.zip ./st_billing
 
       - name: Create Release
         uses: "marvinpinto/action-automatic-releases@v1.2.1"
@@ -97,7 +96,7 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           title: "Release v${{ env.RELEASE_VERSION }}"
           prerelease: false
-          files: release_package.zip
+          files: st_billing.zip
 
         env:
           CI: false
