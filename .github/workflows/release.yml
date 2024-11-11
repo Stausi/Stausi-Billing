@@ -1,75 +1,92 @@
-name: Build and Release React App
+name: Release
 
 on:
   push:
-    branches:
-      - main  # Adjust this to the branch you want to monitor
-
-permissions:
-  contents: write  # Allow GITHUB_TOKEN to create a release
+    tags:
+      - "v*.*.*"
 
 jobs:
-  build:
-    if: contains(github.event.head_commit.message, 'bump')
+  create-release:
+    name: Build and Create Tagged release
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+      - name: Install archive tools
+        run: sudo apt install zip
 
-      # Step 2: Set up Node.js
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Checkout source code
+        uses: actions/checkout@v2
         with:
-          node-version: '18'  # Set to the Node.js version required by your project
+          fetch-depth: 0
+          ref: ${{ github.event.repository.default_branch }}
 
-      # Step 3: Install dependencies
-      - name: Install Dependencies
-        run: |
-          cd web
-          npm install
-
-      # Step 4: Build the React app
-      - name: Build React App
-        run: |
-          cd web
-          npm run build
-
-      # Step 5: Package built assets and source code
-      - name: Create release assets
-        run: |
-          mkdir release
-          # Move the build folder to release directory
-          mv web/build ./release/build
-          # Include the source code in release
-          cp -r web ./release/source_code
-          # Create a zip file of the release assets
-          cd release
-          zip -r release_assets.zip ./*
-
-      # Step 6: Extract Version from fxmanifest.lua
-      - name: Extract Version
-        id: extract_version
-        run: |
-          version=$(grep -oP "version\s+'\K[0-9]+\.[0-9]+\.[0-9]+" fxmanifest.lua)
-          echo "version=$version" >> $GITHUB_ENV
-
-      # Step 7: Upload Release Assets
-      - name: Upload Release Assets
-        uses: actions/upload-artifact@v3
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4.0.0
         with:
-          name: release_assets
-          path: release/release_assets.zip
+          version: 9
 
-      # Step 8: Create GitHub Release
+      - name: Get variables
+        id: get_vars
+        run: |
+          echo '::set-output name=SHORT_SHA::$(git rev-parse --short HEAD)'
+          echo '::set-output name=DATE::$(date +'%D')'
+
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+          cache: "pnpm"
+          cache-dependency-path: "web/pnpm-lock.yaml"
+
+      - name: Install dependencies
+        run: pnpm i --frozen-lockfile
+        working-directory: web
+
+      - name: Run build
+        run: pnpm build
+        working-directory: web
+        env:
+          CI: false
+
+      - name: Bump manifest version
+        run: node .github/actions/bump-manifest-version.js
+        env:
+          TGT_RELEASE_VERSION: ${{ github.ref_name }}
+
+      - name: Push manifest change
+        uses: EndBug/add-and-commit@v8
+        with:
+          add: fxmanifest.lua
+          push: true
+          author_name: Manifest Bumper
+          author_email: 41898282+github-actions[bot]@users.noreply.github.com
+          message: "chore: bump manifest version to ${{ github.ref_name }}"
+
+      - name: Update tag ref
+        uses: EndBug/latest-tag@latest
+        with:
+          tag-name: ${{ github.ref_name }}
+
+      - name: Bundle files
+        run: |
+          mkdir -p ./temp/ox_inventory
+          mkdir -p ./temp/ox_inventory/web
+          cp ./{server.lua,README.md,LICENSE,fxmanifest.lua,client.lua,init.lua} ./temp/ox_inventory
+          cp -r ./{setup,modules,data,locales} ./temp/ox_inventory
+          cp -r ./web/build ./temp/ox_inventory/web/build
+          cp ./web/LICENSE ./temp/ox_inventory/web/build
+          cp -r ./web/images ./temp/ox_inventory/web/images
+          cd ./temp && zip -r ../ox_inventory.zip ./ox_inventory
+
       - name: Create Release
-        uses: ncipollo/release-action@v1
+        uses: "marvinpinto/action-automatic-releases@v1.2.1"
+        id: auto_release
         with:
-          tag: bump-${{ github.run_id }}
-          name: Release v${{ env.version }}
-          body: |
-            Automatically generated release for commit with "bump" in the message.
-          draft: false
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          title: "${{ env.RELEASE_VERSION }}"
           prerelease: false
-          artifacts: release_assets
+          files: ox_inventory.zip
+
+        env:
+          CI: false
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
