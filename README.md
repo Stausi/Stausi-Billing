@@ -13,7 +13,7 @@ ADD COLUMN `time` int(11) NOT NULL DEFAULT unix_timestamp();
 1 Download [Ox-Lib](https://github.com/overextended/ox_lib/releases)
 2 Go to your server.cfg and add setr 
 ``` lua 
-ox:locale dk 
+setr ox:locale dk 
 ```
 Or change it to your preferred language.
 
