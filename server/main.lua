@@ -243,3 +243,8 @@ AddEventHandler('playerDropped', function(reason)
 		end
 	end
 end)
+
+if Config.VersionCheck then 
+    lib.versionCheck('Stausi/Stausi-Billing')
+    return 
+end
