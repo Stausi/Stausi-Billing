@@ -1,3 +1,5 @@
+lib.locale()
+
 local cached_players = {}
 
 RegisterServerEvent('esx_billing:sendBill')
@@ -33,10 +35,10 @@ AddEventHandler('esx_billing:sendBill', function(playerId, sharedAccountName, la
 		}, function(rowsChanged)
 			local billingType = sharedAccountName == "society_police" and "bøde" or "faktura"
 			exports["lb-phone"]:SendNotification(xTarget.source, {
-				app = "billing_app",
-				title = ("Modtaget %s"):format(billingType),
-				content = ("Du har modtaget en %s på %s,- DKK"):format(billingType, amount),
-			})
+                app = "billing_app",
+                title = string.format(locale('billing_received_title'), billingType),
+                content = string.format(locale('billing_received_content'), billingType, amount),
+            })
 			
 			if cached_players[xTarget.identifier] then
 				local label = ""
@@ -46,7 +48,7 @@ AddEventHandler('esx_billing:sendBill', function(playerId, sharedAccountName, la
 					label = ("%s"):format(labelname)
 				end
 
-				local amountLabel = ("%s,- DKK"):format(GroupDigits(amount))
+				local amountLabel = string.format(locale('currency_format'), GroupDigits(amount))
 
 				table.insert(cached_players[xTarget.identifier], {
 					id = rowsChanged.insertId,
@@ -82,7 +84,7 @@ lib.callback.register('st_billing_app:GetBills', function(source)
 				label = ("%s"):format(labelname)
 			end
 
-			local amountLabel = ("%s,- DKK"):format(GroupDigits(row.amount))
+			local amountLabel = string.format(locale('currency_format'), GroupDigits(amount))
 
 			table.insert(billings, {
 				id = row.id,
@@ -200,17 +202,17 @@ ESX.RegisterServerCallback('esx_billing:payBill', function(source, cb, id)
 
 						local billingType = target == "society_police" and "bøde" or "faktura"
 						exports["lb-phone"]:SendNotification(xPlayer.source, {
-							app = "billing_app",
-							title = "Betalt faktura",
-							content = ("Du har betalt en %s på %s,- DKK"):format(billingType, GroupDigits(amount)),
-						})
+                            app = "billing_app",
+                            title = locale("billing_paid_title"),
+                            content = string.format(locale("billing_paid_content"), billingType, GroupDigits(amount)),
+                        })
 
 						if xTarget ~= nil then
 							exports["lb-phone"]:SendNotification(xTarget.source, {
-								app = "billing_app",
-								title = "Betalt faktura",
-								content = ("Du har fået betaling på en %s på %s,- DKK"):format(billingType, GroupDigits(amount)),
-							})
+                                app = "billing_app",
+                                title = locale("billing_paid_title"),
+                                content = string.format(locale("billing_received_content"), billingType, GroupDigits(amount)),
+                            })
 						end
 
 						TriggerEvent("esx_billing:paidBill", id, target, amount, xPlayer, sender)
@@ -219,7 +221,7 @@ ESX.RegisterServerCallback('esx_billing:payBill', function(source, cb, id)
 						cb(cached_players[xPlayer.identifier])
 					end)
 				else
-					TriggerClientEvent('esx:showNotification', xPlayer.source, "Du har ikke penge til dette.")
+					TriggerClientEvent('esx:showNotification', xPlayer.source, locale("insufficient_funds"))
 					cb(cached_players[xPlayer.identifier])
 				end
 			end)

@@ -1,0 +1,11 @@
+{
+    "billing_received_title": "Received %s",
+    "billing_received_content": "You have received payment for a %s of %s$",
+
+    "currency_format": "%s $",
+
+    "billing_paid_title": "Paid Invoice",
+    "billing_paid_content": "You have paid for a %s of %s$",
+
+    "insufficient_funds": "You do not have enough funds for this."
+}

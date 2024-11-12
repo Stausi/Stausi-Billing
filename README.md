@@ -9,6 +9,14 @@ ALTER TABLE `billing`
 ADD COLUMN `time` int(11) NOT NULL DEFAULT unix_timestamp();
 ```
 
+## Setup Locales 
+1 Download [Ox-Lib](https://github.com/overextended/ox_lib/releases)
+2 Go to your server.cfg and add setr 
+``` lua 
+ox:locale dk 
+```
+or change it to your preferred language.
+
 ## Installing modules
 
 1. Install [pnpm](https://pnpm.io/installation)

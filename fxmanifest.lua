@@ -3,7 +3,7 @@ games { 'gta5' }
 
 author 'Stausi'
 description 'Stausi Billing'
-version 'v1.0.1'
+version 'v1.0.3'
 lua54 'yes'
 
 server_scripts {
@@ -32,6 +32,7 @@ escrow_ignore {
 
 files {
     "web/build/**/*",
+	'locales/*.json',
 }
 
 ui_page 'web/build/index.html'
