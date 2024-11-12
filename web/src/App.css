@@ -28,14 +28,16 @@
     background-color: #111;
 }
 
+
 .app.light h1.headline {
     color: #111;
+    border-bottom: 2px solid #ccc; 
 }
 
 .app.dark h1.headline {
     color: #fefefe;
+    border-bottom: 2px solid #444; 
 }
-
 .player-billings {
     width: 100%;
     display: flex;
@@ -67,6 +69,25 @@
 
 .billing-container h1, .billing-container h2 {
     margin: 0;
+}
+
+
+.no-bills {
+    position: relative;
+    text-align: center;
+    font-size: 1.2em;
+    color: #999;
+    padding: 2rem;
+    opacity: 0.8;
+    top: -26px;
+}
+
+.app.light .no-bills {
+    color: #555;
+}
+
+.app.dark .no-bills {
+    color: #ccc;
 }
 
 .container-header {

@@ -64,11 +64,14 @@ const App = () => {
 
     return (
         <AppProvider>
-            <div className={`app ${isDarkMode ? "dark" : "light"}`} ref={appDiv}>
-                <div className={`app-content`}>
-                    <h1 className="headline">Faktura/Bøder</h1>
-                    <div className={`player-billings`}>
-                        {billings.map((billing, index) => (
+        <div className={`app ${isDarkMode ? "dark" : "light"}`} ref={appDiv}>
+            <div className={`app-content`}>
+                <h1 className="headline">Faktura/Bøder</h1>
+                <div className={`player-billings`}>
+                    {billings.length === 0 ? (
+                        <p className="no-bills">Du har ingen Faktura/Bøder</p>
+                    ) : (
+                        billings.map((billing, index) => (
                             <div key={index} className="billing-container">
                                 <div className="container-header">
                                     <h1>{ billing.label }</h1>
@@ -78,11 +81,12 @@ const App = () => {
                                     </div>
                                 </div>
                             </div>
-                        ))}
-                    </div>
+                        ))
+                    )}
                 </div>
             </div>
-        </AppProvider>
+        </div>
+    </AppProvider>
     );
 };
 
