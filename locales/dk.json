@@ -1,0 +1,12 @@
+{
+    "billing_received_title": "Modtaget %s",
+    "billing_received_content": "Du har fået betaling på en %s på %s,- DKK",
+
+    "currency_format": "%s,- DKK",
+
+    "billing_paid_title": "Betalt faktura",
+    "billing_paid_content": "Du har betalt en %s på %s,- DKK",
+
+    "insufficient_funds": "Du har ikke penge til dette."
+}
+

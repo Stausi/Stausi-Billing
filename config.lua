@@ -1,6 +1,6 @@
 Config = {}
-Config.Locale = 'en'
 Config.Debug = false
+Config.VersionCheck = true -- # Skriver i din server konsol når en ny opdatering er tilgængelig!
 
 Debug = function(msg)
     if Config.Debug then
