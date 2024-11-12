@@ -15,7 +15,7 @@ ADD COLUMN `time` int(11) NOT NULL DEFAULT unix_timestamp();
 ``` lua 
 ox:locale dk 
 ```
-or change it to your preferred language.
+Or change it to your preferred language.
 
 ## Installing modules
 
