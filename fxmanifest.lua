@@ -36,3 +36,5 @@ files {
 }
 
 ui_page 'web/build/index.html'
+
+provide 'esx-billing'

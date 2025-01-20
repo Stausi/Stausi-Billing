@@ -84,8 +84,7 @@ lib.callback.register('st_billing_app:GetBills', function(source)
 				label = ("%s"):format(labelname)
 			end
 
-			local amountLabel = string.format(locale('currency_format'), GroupDigits(amount))
-
+			local amountLabel = string.format(locale('currency_format'), GroupDigits(row.amount))
 			table.insert(billings, {
 				id = row.id,
 				identifier = row.identifier,
